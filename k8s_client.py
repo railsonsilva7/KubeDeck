@@ -13,6 +13,7 @@ class K8sClient:
         self.core_api = None
         self.apps_api = None
         self.net_api = None
+        self.custom_api = None
 
     def load_config_from_bytes(self, file_bytes):
         fd, temp_path = tempfile.mkstemp(suffix=".yaml")
@@ -26,6 +27,7 @@ class K8sClient:
             self.core_api = client.CoreV1Api()
             self.apps_api = client.AppsV1Api()
             self.net_api = client.NetworkingV1Api()
+            self.custom_api = client.CustomObjectsApi()
             return True, "Configuração carregada com sucesso."
         except Exception as e:
             return False, f"Erro ao carregar configuração: {str(e)}"
@@ -49,17 +51,66 @@ class K8sClient:
         namespaces = self.core_api.list_namespace()
         return [ns.metadata.name for ns in namespaces.items]
 
+    def _parse_cpu(self, cpu_str):
+        if not isinstance(cpu_str, str): return 0
+        if cpu_str.endswith("n"): return int(cpu_str[:-1]) / 1_000_000
+        if cpu_str.endswith("m"): return int(cpu_str[:-1])
+        try: return int(cpu_str) * 1000
+        except: return 0
+
+    def _parse_mem(self, mem_str):
+        if not isinstance(mem_str, str): return 0
+        if mem_str.endswith("Ki"): return int(mem_str[:-2]) / 1024
+        if mem_str.endswith("Mi"): return int(mem_str[:-2])
+        if mem_str.endswith("Gi"): return int(mem_str[:-2]) * 1024
+        try: return int(mem_str) / (1024 * 1024)
+        except: return 0
+
+    def get_node_metrics(self):
+        if not self.custom_api: return {}
+        try:
+            metrics = self.custom_api.list_cluster_custom_object("metrics.k8s.io", "v1beta1", "nodes")
+            res = {}
+            for item in metrics.get("items", []):
+                cpu = self._parse_cpu(item.get("usage", {}).get("cpu", "0"))
+                mem = self._parse_mem(item.get("usage", {}).get("memory", "0"))
+                res[item["metadata"]["name"]] = {"cpu": f"{int(cpu)}m", "memory": f"{int(mem)}Mi"}
+            return res
+        except: return {}
+
     def get_nodes(self):
         if not self.core_api: return []
         nodes = self.core_api.list_node()
+        metrics = self.get_node_metrics()
         return [{
             "Name": node.metadata.name,
             "Status": "Ready" if any(cond.type == "Ready" and cond.status == "True" for cond in node.status.conditions) else "NotReady",
+            "CPU Usage": metrics.get(node.metadata.name, {}).get("cpu", "N/A"),
+            "Memory Usage": metrics.get(node.metadata.name, {}).get("memory", "N/A"),
             "Version": node.status.node_info.kubelet_version,
             "OS": node.status.node_info.os_image
         } for node in nodes.items]
 
     # --- Workloads ---
+    def get_pod_metrics(self, namespace="default"):
+        if not self.custom_api: return {}
+        try:
+            if namespace == "All Namespaces":
+                metrics = self.custom_api.list_cluster_custom_object("metrics.k8s.io", "v1beta1", "pods")
+            else:
+                metrics = self.custom_api.list_namespaced_custom_object("metrics.k8s.io", "v1beta1", namespace, "pods")
+            
+            res = {}
+            for item in metrics.get("items", []):
+                total_cpu = 0
+                total_mem = 0
+                for c in item.get("containers", []):
+                    total_cpu += self._parse_cpu(c.get("usage", {}).get("cpu", "0"))
+                    total_mem += self._parse_mem(c.get("usage", {}).get("memory", "0"))
+                res[item["metadata"]["name"]] = {"cpu": f"{int(total_cpu)}m", "memory": f"{int(total_mem)}Mi"}
+            return res
+        except: return {}
+
     def get_pods(self, namespace="default"):
         if not self.core_api: return []
         if namespace == "All Namespaces":
@@ -67,10 +118,14 @@ class K8sClient:
         else:
             pods = self.core_api.list_namespaced_pod(namespace)
         
+        metrics = self.get_pod_metrics(namespace)
+        
         return [{
             "Namespace": pod.metadata.namespace,
             "Name": pod.metadata.name,
             "Status": pod.status.phase,
+            "CPU": metrics.get(pod.metadata.name, {}).get("cpu", "N/A"),
+            "Memory": metrics.get(pod.metadata.name, {}).get("memory", "N/A"),
             "IP": pod.status.pod_ip or "N/A",
             "Node": pod.spec.node_name or "N/A"
         } for pod in pods.items]
@@ -251,6 +306,58 @@ class K8sClient:
             self.core_api = None
             self.apps_api = None
             self.net_api = None
+            self.custom_api = None
+
+    # --- K9s Core Features ---
+    def describe_resource(self, res_type, name, namespace="default"):
+        if not self.config_path: return "Kubeconfig not loaded"
+        cmd = ["kubectl", "describe", "--kubeconfig", self.config_path, "-n", namespace, res_type, name]
+        try:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            out, err = process.communicate(timeout=10)
+            return out if process.returncode == 0 else err
+        except Exception as e:
+            return str(e)
+
+    def delete_resource(self, res_type, name, namespace="default"):
+        if not self.config_path: return False, "Kubeconfig not loaded"
+        cmd = ["kubectl", "delete", "--kubeconfig", self.config_path, "-n", namespace, res_type, name]
+        try:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            out, err = process.communicate(timeout=10)
+            if process.returncode != 0:
+                return False, err
+            return True, out
+        except Exception as e:
+            return False, str(e)
+            
+    def scale_resource(self, res_type, name, replicas, namespace="default"):
+        if not self.apps_api: return False, "API Not connected."
+        try:
+            body = {"spec": {"replicas": replicas}}
+            if res_type.lower() == "deployment":
+                self.apps_api.patch_namespaced_deployment_scale(name, namespace, body)
+            elif res_type.lower() == "statefulset":
+                self.apps_api.patch_namespaced_stateful_set_scale(name, namespace, body)
+            else:
+                return False, "Unsupported resource type for scaling."
+            return True, f"Scaled {name} to {replicas}"
+        except Exception as e:
+            return False, str(e)
+            
+    def exec_command(self, pod_name, command, namespace="default"):
+        if not self.config_path: return False, "Kubeconfig not loaded"
+        import shlex
+        args = shlex.split(command)
+        cmd = ["kubectl", "exec", "--kubeconfig", self.config_path, "-n", namespace, pod_name, "--"] + args
+        try:
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            out, err = process.communicate(timeout=30)
+            if process.returncode != 0:
+                return False, err or out
+            return True, out
+        except Exception as e:
+            return False, str(e)
 
     # --- Tunnels ---
     def get_resource_ports(self, res_type, name, namespace="default"):

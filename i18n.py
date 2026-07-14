@@ -88,6 +88,47 @@ def get_text(lang, key):
             "active_tunnels": "Túneis Ativos",
             "btn_disconnect_tunnel": "Desconectar",
             "no_active_tunnels": "Nenhum túnel ativo no momento.",
+            
+            # Metrics
+            "cpu": "CPU",
+            "memory": "Memória",
+            
+            # K9s Core Features
+            "actions": "Ações",
+            "btn_describe": "Describe",
+            "btn_delete": "Deletar",
+            "btn_scale": "Scale",
+            "btn_exec": "Exec",
+            "describe_title": "Descrevendo: {}/{}",
+            "delete_confirm": "Tem certeza que deseja deletar {}/{}?",
+            "delete_success": "{} deletado com sucesso.",
+            "scale_title": "Escalar {}/{}",
+            "replicas": "Réplicas",
+            "btn_apply_scale": "Aplicar Scale",
+            "scale_success": "{} escalado para {} réplicas.",
+            "exec_title": "Executar Comando em {}/{}",
+            "command": "Comando (ex: ls -l, /bin/sh -c '...')",
+            "btn_run": "Rodar",
+            "exec_output": "Saída:",
+            
+            # Database
+            "db_title": "Banco de Dados (Dump & Restore)",
+            "db_subtitle": "Realize backup ou restore de bancos de dados PostgreSQL.",
+            "select_db_pod": "Selecione o Pod do Banco de Dados",
+            "db_user": "Usuário do DB",
+            "db_name": "Nome do DB",
+            "btn_dump": "Fazer Dump (pg_dump)",
+            "dump_success": "Dump gerado com sucesso!",
+            "download_dump": "Baixar Dump (.sql)",
+            "restore_title": "Restaurar Banco de Dados",
+            "upload_sql": "Faça upload do arquivo .sql",
+            "btn_restore": "Restaurar (psql)",
+            "restore_success": "Restore concluído com sucesso!",
+            "restore_warning": "Isso irá sobrescrever os dados existentes. Proceder?",
+            "db_password": "Senha do DB (Opcional)",
+            
+            # Env Download
+            "download_env": "Baixar como .env",
         },
         "en": {
             # app.py
@@ -177,6 +218,47 @@ def get_text(lang, key):
             "active_tunnels": "Active Tunnels",
             "btn_disconnect_tunnel": "Disconnect",
             "no_active_tunnels": "No active tunnels at the moment.",
+            
+            # Metrics
+            "cpu": "CPU",
+            "memory": "Memory",
+            
+            # K9s Core Features
+            "actions": "Actions",
+            "btn_describe": "Describe",
+            "btn_delete": "Delete",
+            "btn_scale": "Scale",
+            "btn_exec": "Exec",
+            "describe_title": "Describing: {}/{}",
+            "delete_confirm": "Are you sure you want to delete {}/{}?",
+            "delete_success": "{} successfully deleted.",
+            "scale_title": "Scale {}/{}",
+            "replicas": "Replicas",
+            "btn_apply_scale": "Apply Scale",
+            "scale_success": "{} scaled to {} replicas.",
+            "exec_title": "Execute Command in {}/{}",
+            "command": "Command (e.g., ls -l, /bin/sh -c '...')",
+            "btn_run": "Run",
+            "exec_output": "Output:",
+            
+            # Database
+            "db_title": "Database (Dump & Restore)",
+            "db_subtitle": "Perform backup or restore for PostgreSQL databases.",
+            "select_db_pod": "Select Database Pod",
+            "db_user": "DB User",
+            "db_name": "DB Name",
+            "btn_dump": "Run Dump (pg_dump)",
+            "dump_success": "Dump generated successfully!",
+            "download_dump": "Download Dump (.sql)",
+            "restore_title": "Restore Database",
+            "upload_sql": "Upload .sql file",
+            "btn_restore": "Restore (psql)",
+            "restore_success": "Restore completed successfully!",
+            "restore_warning": "This will overwrite existing data. Proceed?",
+            "db_password": "DB Password (Optional)",
+            
+            # Env Download
+            "download_env": "Download as .env",
         },
         "es": {
             # app.py
@@ -266,6 +348,47 @@ def get_text(lang, key):
             "active_tunnels": "Túneles Activos",
             "btn_disconnect_tunnel": "Desconectar",
             "no_active_tunnels": "No hay túneles activos en este momento.",
+            
+            # Metrics
+            "cpu": "CPU",
+            "memory": "Memoria",
+            
+            # K9s Core Features
+            "actions": "Acciones",
+            "btn_describe": "Describe",
+            "btn_delete": "Eliminar",
+            "btn_scale": "Scale",
+            "btn_exec": "Exec",
+            "describe_title": "Describiendo: {}/{}",
+            "delete_confirm": "¿Está seguro de eliminar {}/{}?",
+            "delete_success": "{} eliminado con éxito.",
+            "scale_title": "Escalar {}/{}",
+            "replicas": "Réplicas",
+            "btn_apply_scale": "Aplicar Scale",
+            "scale_success": "{} escalado a {} réplicas.",
+            "exec_title": "Ejecutar Comando en {}/{}",
+            "command": "Comando (ej: ls -l, /bin/sh -c '...')",
+            "btn_run": "Ejecutar",
+            "exec_output": "Salida:",
+            
+            # Database
+            "db_title": "Base de Datos (Dump & Restore)",
+            "db_subtitle": "Realice copias de seguridad o restaure bases de datos PostgreSQL.",
+            "select_db_pod": "Seleccione el Pod de BD",
+            "db_user": "Usuario de BD",
+            "db_name": "Nombre de BD",
+            "btn_dump": "Generar Dump (pg_dump)",
+            "dump_success": "¡Dump generado con éxito!",
+            "download_dump": "Descargar Dump (.sql)",
+            "restore_title": "Restaurar Base de Datos",
+            "upload_sql": "Subir archivo .sql",
+            "btn_restore": "Restaurar (psql)",
+            "restore_success": "¡Restauración completada con éxito!",
+            "restore_warning": "Esto sobrescribirá los datos existentes. ¿Proceder?",
+            "db_password": "Contraseña de BD (Opcional)",
+            
+            # Env Download
+            "download_env": "Descargar como .env",
         },
         "zh": {
             # app.py
@@ -355,6 +478,47 @@ def get_text(lang, key):
             "active_tunnels": "活动隧道",
             "btn_disconnect_tunnel": "断开连接",
             "no_active_tunnels": "目前没有活动的隧道。",
+            
+            # Metrics
+            "cpu": "CPU",
+            "memory": "内存",
+            
+            # K9s Core Features
+            "actions": "操作",
+            "btn_describe": "Describe",
+            "btn_delete": "删除",
+            "btn_scale": "Scale",
+            "btn_exec": "Exec",
+            "describe_title": "描述: {}/{}",
+            "delete_confirm": "您确定要删除 {}/{} 吗？",
+            "delete_success": "成功删除 {}。",
+            "scale_title": "扩展 {}/{}",
+            "replicas": "副本数",
+            "btn_apply_scale": "应用扩展",
+            "scale_success": "{} 扩展到 {} 个副本。",
+            "exec_title": "在 {}/{} 中执行命令",
+            "command": "命令 (例如: ls -l, /bin/sh -c '...')",
+            "btn_run": "运行",
+            "exec_output": "输出:",
+            
+            # Database
+            "db_title": "数据库 (Dump & Restore)",
+            "db_subtitle": "执行 PostgreSQL 数据库的备份或恢复。",
+            "select_db_pod": "选择数据库 Pod",
+            "db_user": "DB 用户",
+            "db_name": "DB 名称",
+            "btn_dump": "运行 Dump (pg_dump)",
+            "dump_success": "Dump 成功生成！",
+            "download_dump": "下载 Dump (.sql)",
+            "restore_title": "恢复数据库",
+            "upload_sql": "上传 .sql 文件",
+            "btn_restore": "恢复 (psql)",
+            "restore_success": "恢复成功完成！",
+            "restore_warning": "这将覆盖现有数据。是否继续？",
+            "db_password": "DB 密码 (可选)",
+            
+            # Env Download
+            "download_env": "作为 .env 下载",
         }
     }
     

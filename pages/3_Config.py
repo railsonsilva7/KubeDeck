@@ -75,6 +75,8 @@ with tab2:
                     
                 details = client.get_secret_details(target_name, target_ns)
                 if details and not "error" in details:
+                    env_str = "\n".join([f'{k}="{v}"' for k, v in details.items()])
+                    st.download_button(get_text(lang, "download_env"), data=env_str, file_name=f"{target_name}.env")
                     for k, v in details.items():
                         with st.expander(f"{k}"):
                             st.code(v)

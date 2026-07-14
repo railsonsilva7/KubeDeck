@@ -105,7 +105,7 @@ Se você representa uma corporação com requisitos rígidos de **Governança, C
 ## ☕ Apoie o Projeto (Doações)
 O desenvolvimento do **KubeDeck** é movido a café e noites em claro. Se essa ferramenta salvou o seu dia ou poupou horas da sua equipe, considere pagar um café para o desenvolvedor manter o projeto livre e atualizado! Aceitamos contribuições globais:
 
-- **Pix (Brasil):** `sua_chave_pix_aqui@email.com`
+- **Pix (Brasil):** `pixrailsonsilva@gmail.com`
 - **PayPal (Internacional):** [Doe via PayPal](https://paypal.me/SEU_LINK_AQUI)
 - **Crypto (USDT - TRC20/ERC20):** `sua_carteira_usdt_aqui`
 
